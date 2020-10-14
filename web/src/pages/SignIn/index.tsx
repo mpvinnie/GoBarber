@@ -6,7 +6,8 @@ import { FormHandles } from '@unform/core'
 
 import LogoImg from '../../assets/logo.svg'
 
-import { useAuth } from '../../hooks/AuthContext'
+import { useAuth } from '../../hooks/auth'
+import { useToast } from '../../hooks/toast'
 import getValidationErrors from '../../utils/getValidationErrors'
 
 import Input from '../../components/Input'
@@ -23,6 +24,7 @@ const SignIn: React.FC = () => {
   const formRef = useRef<FormHandles>(null)
 
   const { signIn } = useAuth()
+  const { addToast } = useToast()
 
   const handleSubmit = useCallback(
     async (data: ISignInFormData) => {
@@ -40,7 +42,7 @@ const SignIn: React.FC = () => {
           abortEarly: false
         })
 
-        signIn({
+        await signIn({
           email: data.email,
           password: data.password
         })
@@ -50,9 +52,15 @@ const SignIn: React.FC = () => {
 
           formRef.current?.setErrors(errors)
         }
+
+        addToast({
+          type: 'error',
+          title: 'Erro na autenticação',
+          description: 'Ocorreu um erro ao fazer login, cheque as credenciais'
+        })
       }
     },
-    [signIn]
+    [addToast, signIn]
   )
 
   return (
