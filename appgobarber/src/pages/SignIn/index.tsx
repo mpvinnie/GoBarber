@@ -13,6 +13,8 @@ import { useNavigation } from '@react-navigation/native'
 import * as Yup from 'yup'
 import getValidationErrors from '../../utils/getValidationErrors'
 
+import { useAuth } from '../../hooks/auth'
+
 import { Form } from '@unform/mobile'
 import { FormHandles } from '@unform/core'
 
@@ -40,42 +42,47 @@ const SignIn: React.FC = () => {
   const passwordInputRef = useRef<TextInput>(null)
   const formRef = useRef<FormHandles>(null)
 
-  const handleSignIn = useCallback(async (data: ISignInFormData) => {
-    try {
-      formRef.current?.setErrors({})
+  const { signIn, user } = useAuth()
 
-      const schema = Yup.object().shape({
-        email: Yup.string()
-          .required('E-mail obrigatório')
-          .email('Digite um e-mail válido'),
-        password: Yup.string().required('Senha obrigatória')
-      })
+  console.log(user)
 
-      await schema.validate(data, {
-        abortEarly: false
-      })
+  const handleSignIn = useCallback(
+    async (data: ISignInFormData) => {
+      try {
+        formRef.current?.setErrors({})
 
-      // await signIn({
-      //   email: data.email,
-      //   password: data.password
-      // })
+        const schema = Yup.object().shape({
+          email: Yup.string()
+            .required('E-mail obrigatório')
+            .email('Digite um e-mail válido'),
+          password: Yup.string().required('Senha obrigatória')
+        })
 
-      // history.push('/dashboard')
-    } catch (err) {
-      if (err instanceof Yup.ValidationError) {
-        const errors = getValidationErrors(err)
+        await schema.validate(data, {
+          abortEarly: false
+        })
 
-        formRef.current?.setErrors(errors)
+        await signIn({
+          email: data.email,
+          password: data.password
+        })
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const errors = getValidationErrors(err)
 
-        return
+          formRef.current?.setErrors(errors)
+
+          return
+        }
+
+        Alert.alert(
+          'Erro na autenticação',
+          'Ocorreu um erro ao fazer login, cheque as credenciais'
+        )
       }
-
-      Alert.alert(
-        'Erro na autenticação',
-        'Ocorreu um erro ao fazer login, cheque as credenciais'
-      )
-    }
-  }, [])
+    },
+    [signIn]
+  )
 
   return (
     <>
