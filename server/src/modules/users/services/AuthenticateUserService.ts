@@ -1,4 +1,3 @@
-import { compare } from 'bcryptjs'
 import { injectable, inject } from 'tsyringe'
 import { sign } from 'jsonwebtoken'
 import authConfig from '@config/auth'
@@ -7,6 +6,7 @@ import AppError from '@shared/errors/AppError'
 
 import User from '@modules/users/infra/typeorm/entities/User'
 import IUsersRepository from '../repositories/IUsersRepository'
+import IHashProvider from '../providers/HashProvider/models/IHashProviders'
 
 interface IRequest {
   email: string
@@ -22,7 +22,10 @@ interface IResponse {
 class AuthenticateUserService {
   constructor(
     @inject('UsersRepository')
-    private usersRepository: IUsersRepository
+    private usersRepository: IUsersRepository,
+
+    @inject('HashProvider')
+    private hashProvider: IHashProvider
   ) {
     /**/
   }
@@ -34,7 +37,10 @@ class AuthenticateUserService {
       throw new AppError('Incorrect email/password combination.', 401)
     }
 
-    const passwordMatched = await compare(password, user.password)
+    const passwordMatched = await this.hashProvider.compareHash(
+      password,
+      user.password
+    )
 
     if (!passwordMatched) {
       throw new AppError('Incorrect email/password combination.', 401)
