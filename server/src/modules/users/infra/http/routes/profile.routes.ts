@@ -9,5 +9,6 @@ const profieController = new ProfileController()
 profileRouter.use(ensureAuthenticated)
 
 profileRouter.put('/', profieController.update)
+profileRouter.get('/', profieController.show)
 
 export default profileRouter

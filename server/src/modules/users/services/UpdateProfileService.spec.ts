@@ -7,7 +7,7 @@ let fakeUsersRepository: FakeUsersRepository
 let updateProfile: UpdateProfileService
 let fakeHashProvider: FakeHashProvider
 
-describe('UpdateUser', () => {
+describe('UpdateProfile', () => {
   beforeEach(() => {
     fakeUsersRepository = new FakeUsersRepository()
     fakeHashProvider = new FakeHashProvider()
@@ -17,7 +17,7 @@ describe('UpdateUser', () => {
     )
   })
 
-  it('should be able to update a user', async () => {
+  it('should be able to update the user profile', async () => {
     const generateHash = jest.spyOn(fakeHashProvider, 'generateHash')
 
     const user = await fakeUsersRepository.create({
