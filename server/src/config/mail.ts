@@ -14,8 +14,8 @@ export default {
 
   defaults: {
     from: {
-      email: 'vinnie@malafaia.com.br',
-      name: 'Vinnie da Malafaia'
+      email: 'contact@appgobarber.com.br',
+      name: 'Equipe Go Barber'
     }
   }
 } as IMailConfig
