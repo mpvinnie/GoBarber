@@ -36,6 +36,7 @@ export const Profile = styled.div`
   img {
     width: 56px;
     height: 56px;
+    object-fit: contain;
     border-radius: 50%;
   }
 
