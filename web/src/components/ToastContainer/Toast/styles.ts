@@ -1,9 +1,11 @@
+/* eslint-disable  */
+
 import styled, { css } from 'styled-components'
 import { animated } from 'react-spring'
 
 interface IContainerProps {
   type?: 'success' | 'error' | 'info'
-  hasDescription: boolean
+  hasDescription: number
 }
 
 const toastTypeVariation = {
