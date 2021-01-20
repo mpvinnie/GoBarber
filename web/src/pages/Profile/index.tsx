@@ -71,11 +71,23 @@ const Profile: React.FC = () => {
     [addToast, history]
   )
 
-  const handleAvatarChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      console.log(e.target.files[0])
-    }
-  }, [])
+  const handleAvatarChange = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      const data = new FormData()
+
+      if (e.target.files) {
+        data.append('avatar', e.target.files[0])
+
+        api.patch('/users/avatar', data).then(() => {
+          addToast({
+            type: 'success',
+            title: 'Avatar atualizado!'
+          })
+        })
+      }
+    },
+    [addToast]
+  )
 
   return (
     <Container>
