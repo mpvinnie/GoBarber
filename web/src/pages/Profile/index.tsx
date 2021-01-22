@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { ChangeEvent, useCallback, useRef } from 'react'
 import { FiUser, FiMail, FiLock, FiCamera, FiArrowLeft } from 'react-icons/fi'
 import { Form } from '@unform/web'
