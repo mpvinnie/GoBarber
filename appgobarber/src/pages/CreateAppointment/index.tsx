@@ -28,13 +28,13 @@ export interface IProvider {
 }
 
 const CreateAppointment: React.FC = () => {
-  const [providers, setProviders] = useState<IProvider[]>([])
-
   const { user } = useAuth()
   const route = useRoute()
   const { goBack } = useNavigation()
 
   const routeParams = route.params as IRouteParams
+
+  const [providers, setProviders] = useState<IProvider[]>([])
   const [selectedProvider, setSelectedProvider] = useState(
     routeParams.providerId
   )
