@@ -15,6 +15,6 @@ export const Container = styled(RectButton)`
 
 export const ButtonText = styled.Text`
   font-family: 'RobotoSlab-Medium';
-  color: ${colors.black};
+  color: ${colors.gray_dark};
   font-size: 18px;
 `

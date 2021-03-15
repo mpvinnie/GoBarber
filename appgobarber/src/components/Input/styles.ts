@@ -7,7 +7,7 @@ export const Container = styled.View`
   width: 100%;
   height: 60px;
   padding: 0 16px;
-  background: ${colors.input_background};
+  background: ${colors.black};
   border-radius: 10px;
   margin-bottom: 8px;
 
