@@ -1,5 +1,6 @@
 import FakeAppointmentsRepository from '../repositories/fakes/FakeAppointmentsRepository'
 import CreateAppointmentService from './CreateAppointmentService'
+import AppError from '@shared/errors/AppError'
 
 let fakeAppointmentsRepository: FakeAppointmentsRepository
 let createAppointment: CreateAppointmentService
@@ -21,7 +22,14 @@ describe('CreateAppointment', () => {
     expect(appointment.provider_id).toBe('123123')
   })
 
-  // it('should not be able to create two appointments on the same time', () => {
-  //   expect(1 + 2).toBe(3)
-  // })
+  it('should not be able to create two appointments on the same time', async () => {
+    const appointmentDate = new Date(2021, 2, 20, 11)
+
+    expect(
+      createAppointment.execute({
+        date: appointmentDate,
+        provider_id: '123123'
+      })
+    ).rejects.toBeInstanceOf(AppError)
+  })
 })
