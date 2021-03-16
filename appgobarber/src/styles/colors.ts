@@ -5,5 +5,6 @@ export default {
   orange: '#ff9000',
   error: '#c53030',
   input_text: '#fff',
-  input_placeholder: '#666360'
+  input_placeholder: '#666360',
+  loading: '#999'
 }
