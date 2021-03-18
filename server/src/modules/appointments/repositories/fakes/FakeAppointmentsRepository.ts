@@ -1,9 +1,10 @@
 import { v4 as uuid } from 'uuid'
-import { isEqual } from 'date-fns'
+import { isEqual, getMonth, getYear } from 'date-fns'
 
 import IAppointmentsRepository from '../IAppointmentsRepository'
 import Appointment from '@modules/appointments/infra/typeorm/entities/Appointment'
 import ICreateAppointmentDTO from '@modules/appointments/dtos/ICreateAppointmentDTO'
+import IFindAllInMonthFromProvider from '@modules/appointments/dtos/IFindAllInMonthFromProviderDTO'
 
 class FakeAppointmentsRepository implements IAppointmentsRepository {
   private appointments: Appointment[] = []
@@ -14,6 +15,21 @@ class FakeAppointmentsRepository implements IAppointmentsRepository {
     )
 
     return findAppointment
+  }
+
+  public async findAllInMonthFromProvider({
+    provider_id,
+    month,
+    year
+  }: IFindAllInMonthFromProvider): Promise<Appointment[]> {
+    const appointments = this.appointments.filter(
+      appointment =>
+        appointment.provider_id === provider_id &&
+        getMonth(appointment.date) + 1 === month &&
+        getYear(appointment.date) === year
+    )
+
+    return appointments
   }
 
   public async create({
