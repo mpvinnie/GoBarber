@@ -13,8 +13,12 @@ describe('CreateAppointment', () => {
   })
 
   it('should be able to create a new appointment', async () => {
+    jest.spyOn(Date, 'now').mockImplementationOnce(() => {
+      return new Date(2021, 2, 18, 12).getTime()
+    })
+
     const appointment = await createAppointment.execute({
-      date: new Date(),
+      date: new Date(2021, 2, 18, 13),
       user_id: '123456',
       provider_id: '123123'
     })
@@ -37,6 +41,56 @@ describe('CreateAppointment', () => {
         user_id: '123456',
         date: appointmentDate,
         provider_id: '123123'
+      })
+    ).rejects.toBeInstanceOf(AppError)
+  })
+
+  it('should not be able to create an appointment on a past date', async () => {
+    jest.spyOn(Date, 'now').mockImplementationOnce(() => {
+      return new Date(2021, 2, 18, 12).getTime()
+    })
+
+    await expect(
+      createAppointment.execute({
+        date: new Date(2021, 2, 18, 10),
+        user_id: 'user_id',
+        provider_id: 'provider_id'
+      })
+    ).rejects.toBeInstanceOf(AppError)
+  })
+
+  it('should not be able to crate on appointment with yourself', async () => {
+    jest.spyOn(Date, 'now').mockImplementationOnce(() => {
+      return new Date(2021, 2, 18, 12).getTime()
+    })
+
+    await expect(
+      createAppointment.execute({
+        date: new Date(2021, 2, 18, 14),
+        user_id: 'user_id',
+        provider_id: 'user_id'
+      })
+    ).rejects.toBeInstanceOf(AppError)
+  })
+
+  it('should not be able to crate on appointment out of range of 8h and 17h', async () => {
+    jest.spyOn(Date, 'now').mockImplementationOnce(() => {
+      return new Date(2021, 2, 18, 12).getTime()
+    })
+
+    await expect(
+      createAppointment.execute({
+        date: new Date(2021, 2, 18, 7),
+        user_id: 'user_id',
+        provider_id: 'provider_id'
+      })
+    ).rejects.toBeInstanceOf(AppError)
+
+    await expect(
+      createAppointment.execute({
+        date: new Date(2021, 2, 18, 18),
+        user_id: 'user_id',
+        provider_id: 'provider_id'
       })
     ).rejects.toBeInstanceOf(AppError)
   })
