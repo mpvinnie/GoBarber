@@ -6,6 +6,7 @@ import { FiLogIn, FiMail } from 'react-icons/fi'
 import { Link } from 'react-router-dom'
 
 import getValidationErrors from '../../utils/getValidationErrors'
+import api from '../../services/api'
 import { useToast } from '../../hooks/toast'
 
 import logoImg from '../../assets/logo.svg'
@@ -38,7 +39,16 @@ const ForgotPassword: React.FC = () => {
           abortEarly: false
         })
 
-        // recuperação de senha
+        await api.post('/password/forgot', {
+          email: data.email
+        })
+
+        addToast({
+          type: 'success',
+          title: 'E-mail de recuperação enviado',
+          description:
+            'Enviamos um e-mail para confirmar a recuperação de senha, cheque sua caixa de entrada'
+        })
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           const errors = getValidationErrors(err)
