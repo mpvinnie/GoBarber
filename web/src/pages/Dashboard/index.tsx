@@ -85,17 +85,12 @@ const Dashboard: React.FC = () => {
         }
       })
       .then((response) => {
-        const appointmentsFormatted = response.data
-          .map((appointment) => {
-            return {
-              ...appointment,
-              hourFormatted: format(parseISO(appointment.date), 'HH:mm')
-            }
-          })
-          .sort((ap1, ap2) => {
-            return Number(ap1.date) - Number(ap2.date)
-          })
-        console.log(response.data)
+        const appointmentsFormatted = response.data.map((appointment) => {
+          return {
+            ...appointment,
+            hourFormatted: format(parseISO(appointment.date), 'HH:mm')
+          }
+        })
 
         setAppointments(appointmentsFormatted)
       })
