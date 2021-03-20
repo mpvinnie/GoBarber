@@ -82,5 +82,5 @@ export const ProviderMeta = styled.View`
 
 export const ProviderMetaText = styled.Text`
   margin-left: 8px;
-  color: ${colors.text_info};
+  color: ${colors.gray};
 `

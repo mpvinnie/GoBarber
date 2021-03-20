@@ -1,6 +1,7 @@
 export default {
   white: '#f4ede8',
   gray_dark: '#312e38',
+  gray: '#999591',
   black: '#232129',
   orange: '#ff9000',
   error: '#c53030',
@@ -11,7 +12,5 @@ export default {
   loading: '#999',
 
   header_background: '#282c2e',
-  provider_background: '#3e3b47',
-
-  text_info: '#999591'
+  provider_background: '#3e3b47'
 }
