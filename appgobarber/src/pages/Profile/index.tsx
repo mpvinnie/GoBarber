@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react'
+import React, { useCallback, useRef, useState } from 'react'
 import {
   StatusBar,
   KeyboardAvoidingView,
@@ -6,13 +6,15 @@ import {
   ScrollView,
   TextInput,
   Alert,
-  View
+  View,
+  PermissionsAndroid
 } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { Form } from '@unform/mobile'
 import { FormHandles } from '@unform/core'
 import * as Yup from 'yup'
 import Icon from 'react-native-vector-icons/Feather'
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker'
 
 import api from '../../services/api'
 
@@ -25,9 +27,13 @@ import Button from '../../components/Button'
 
 import {
   Container,
+  Header,
   BackButton,
-  UserAvatarButton,
+  LogoutButton,
+  UserAvatarContainer,
   UserAvatar,
+  OpenCameraButton,
+  OpenChooseFileButton,
   Title
 } from './styles'
 
@@ -39,18 +45,18 @@ interface IProfileFormData {
   password_confirmation: string
 }
 
-const SignUp: React.FC = () => {
+const Profile: React.FC = () => {
   const formRef = useRef<FormHandles>(null)
   const { goBack } = useNavigation()
 
-  const { user, updateUser } = useAuth()
+  const { user, updateUser, signOut } = useAuth()
 
   const emailInputRef = useRef<TextInput>(null)
   const oldPasswordInputRef = useRef<TextInput>(null)
   const passwordInputRef = useRef<TextInput>(null)
   const confirmPasswordInputRef = useRef<TextInput>(null)
 
-  const handleSignUp = useCallback(
+  const handleUpdateProfile = useCallback(
     async (data: IProfileFormData) => {
       try {
         formRef.current?.setErrors({})
@@ -124,6 +130,146 @@ const SignUp: React.FC = () => {
     [goBack, updateUser]
   )
 
+  const requestCameraPermission = useCallback(async () => {
+    if (Platform.OS === 'android') {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.CAMERA,
+          {
+            title: 'Permissão de camera',
+            message: 'GoBarber precisa de permissão para acessar a câmera',
+            buttonPositive: 'Permitir'
+          }
+        )
+        return granted === PermissionsAndroid.RESULTS.GRANTED
+      } catch (err) {
+        console.warn(err)
+        return false
+      }
+    }
+  }, [])
+
+  const requestExternalWritePermission = useCallback(async () => {
+    if (Platform.OS === 'android') {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+          {
+            title: 'Permissão para salvar',
+            message: 'GoBarber precisa de permissão salvar na galeria',
+            buttonPositive: 'Permitir'
+          }
+        )
+        return granted === PermissionsAndroid.RESULTS.GRANTED
+      } catch (err) {
+        console.warn(err)
+        Alert.alert('Permissão para salvar', err)
+      }
+      return false
+    } else return true
+  }, [])
+
+  const openCamera = useCallback(async () => {
+    const isCameraPermitted = await requestCameraPermission()
+    const isStoragePermitted = await requestExternalWritePermission()
+
+    if (isCameraPermitted && isStoragePermitted) {
+      launchCamera(
+        {
+          mediaType: 'photo',
+          saveToPhotos: true
+        },
+        response => {
+          if (response.didCancel) {
+            return
+          }
+
+          if (response.errorCode === 'camera_unavailable') {
+            Alert.alert('Camera não disponível')
+            return
+          }
+
+          if (response.errorCode === 'permission') {
+            Alert.alert('Permissão negada', 'Você precisa liberar permissão')
+            return
+          }
+
+          if (response.errorMessage) {
+            Alert.alert(response.errorMessage)
+            return
+          }
+
+          const data = new FormData()
+
+          data.append('avatar', {
+            type: 'image/jpeg',
+            name: `${user.id}.jpg`,
+            uri: response.uri
+          })
+
+          api.patch('/users/avatar', data).then(response => {
+            updateUser(response.data)
+          })
+        }
+      )
+    }
+  }, [
+    requestCameraPermission,
+    requestExternalWritePermission,
+    updateUser,
+    user.id
+  ])
+
+  const chooseImageOnGalery = useCallback(async () => {
+    const isCameraPermitted = await requestCameraPermission()
+    const isStoragePermitted = await requestExternalWritePermission()
+
+    if (isCameraPermitted && isStoragePermitted) {
+      launchImageLibrary(
+        {
+          mediaType: 'photo'
+        },
+        response => {
+          if (response.didCancel) {
+            return
+          }
+
+          if (response.errorCode === 'camera_unavailable') {
+            Alert.alert('Camera não disponível')
+            return
+          }
+
+          if (response.errorCode === 'permission') {
+            Alert.alert('Permissão negada', 'Você precisa liberar permissão')
+            return
+          }
+
+          if (response.errorMessage) {
+            Alert.alert(response.errorMessage)
+            return
+          }
+
+          const data = new FormData()
+
+          data.append('avatar', {
+            type: 'image/jpeg',
+            name: `${user.id}.jpg`,
+            uri: response.uri
+          })
+
+          api.patch('/users/avatar', data).then(response => {
+            updateUser(response.data)
+          })
+        }
+      )
+    }
+  }, [
+    requestCameraPermission,
+    requestExternalWritePermission,
+    updateUser,
+    user.id
+  ])
+
   return (
     <>
       <StatusBar backgroundColor={colors.gray_dark} />
@@ -137,17 +283,27 @@ const SignUp: React.FC = () => {
           contentContainerStyle={{ flex: 1 }}
         >
           <Container>
-            <BackButton onPress={goBack}>
-              <Icon name="chevron-left" size={24} color={colors.gray} />
-            </BackButton>
+            <Header>
+              <BackButton onPress={goBack}>
+                <Icon name="chevron-left" size={24} color={colors.gray} />
+              </BackButton>
 
-            <UserAvatarButton
-              onPress={() => {
-                /**/
-              }}
-            >
+              <LogoutButton onPress={signOut}>
+                <Icon name="power" size={20} color={colors.gray} />
+              </LogoutButton>
+            </Header>
+
+            <UserAvatarContainer>
               <UserAvatar source={{ uri: user.avatar_url }} />
-            </UserAvatarButton>
+
+              <OpenCameraButton onPress={openCamera}>
+                <Icon name="camera" size={24} color={colors.gray} />
+              </OpenCameraButton>
+
+              <OpenChooseFileButton onPress={chooseImageOnGalery}>
+                <Icon name="edit" size={24} color={colors.gray} />
+              </OpenChooseFileButton>
+            </UserAvatarContainer>
 
             <View>
               <Title>Meu perfil</Title>
@@ -157,7 +313,7 @@ const SignUp: React.FC = () => {
               initialData={user}
               style={{ width: '100%' }}
               ref={formRef}
-              onSubmit={handleSignUp}
+              onSubmit={handleUpdateProfile}
             >
               <Input
                 autoCapitalize="words"
@@ -235,4 +391,4 @@ const SignUp: React.FC = () => {
   )
 }
 
-export default SignUp
+export default Profile

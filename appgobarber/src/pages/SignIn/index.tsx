@@ -41,9 +41,7 @@ const SignIn: React.FC = () => {
   const formRef = useRef<FormHandles>(null)
   const passwordInputRef = useRef<TextInput>(null)
   const { navigate } = useNavigation()
-  const { signIn, user } = useAuth()
-
-  console.log(user)
+  const { signIn } = useAuth()
 
   const handleSignIn = useCallback(
     async (data: ISignInFormData) => {
