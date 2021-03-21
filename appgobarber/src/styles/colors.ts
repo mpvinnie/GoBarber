@@ -4,6 +4,7 @@ export default {
   gray: '#999591',
   black: '#232129',
   orange: '#ff9000',
+  green: '#04d361',
   error: '#c53030',
 
   input_text: '#fff',
