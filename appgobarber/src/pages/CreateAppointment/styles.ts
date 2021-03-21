@@ -147,3 +147,18 @@ export const HourText = styled.Text<IHourTextProps>`
   font-family: ${fonts.roboto400};
   font-size: 16px;
 `
+
+export const CreateAppointmentButton = styled(RectButton)`
+  height: 50px;
+  background: ${colors.orange};
+  border-radius: 10px;
+  align-items: center;
+  justify-content: center;
+  margin: 0 24px 24px;
+`
+
+export const CreateAppointmentButtonText = styled.Text`
+  font-family: ${fonts.roboto500};
+  font-size: 18px;
+  color: ${colors.black};
+`
