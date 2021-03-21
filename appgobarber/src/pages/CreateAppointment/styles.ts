@@ -70,3 +70,27 @@ export const ProviderName = styled.Text<IProviderNameProps>`
   font-family: 'RobotoSlab-Medium';
   color: ${props => (props.selected ? colors.black : colors.white)};
 `
+
+export const Calendar = styled.View``
+
+export const CalendarTitle = styled.Text`
+  font-family: 'RobotoSlab-Medium';
+  color: ${colors.white};
+  font-size: 24px;
+  margin: 0 24px 24px;
+`
+
+export const OpenDatePickerButton = styled(RectButton)`
+  height: 46px;
+  background: ${colors.orange};
+  border-radius: 10px;
+  align-items: center;
+  justify-content: center;
+  margin: 0 24px;
+`
+
+export const OpenDatePickerButtonText = styled.Text`
+  font-family: 'RobotoSlab-Medium';
+  font-size: 16px;
+  color: ${colors.black};
+`
