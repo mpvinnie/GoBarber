@@ -6,7 +6,7 @@ import React, {
   useState,
   useCallback
 } from 'react'
-import { TextInputProps } from 'react-native'
+import { StyleProp, TextInputProps, ViewStyle } from 'react-native'
 import { useField } from '@unform/core'
 
 import colors from '../../styles/colors'
@@ -16,7 +16,7 @@ import { Container, TextInput, Icon } from './styles'
 interface IInputProps extends TextInputProps {
   name: string
   icon: string
-  containerStyle?: React.CSSProperties
+  containerStyle?: StyleProp<ViewStyle>
 }
 
 interface IInputValueReference {
