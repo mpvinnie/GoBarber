@@ -1,6 +1,6 @@
 import { MigrationInterface, QueryRunner, Table } from 'typeorm'
 
-export class createAppointments1622656022949 implements MigrationInterface {
+export class createAppointments1622923839508 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
@@ -14,8 +14,9 @@ export class createAppointments1622656022949 implements MigrationInterface {
             default: 'uuid_generate_v4()'
           },
           {
-            name: 'provider',
-            type: 'varchar'
+            name: 'provider_id',
+            type: 'uuid',
+            isNullable: true
           },
           {
             name: 'date',
@@ -30,6 +31,16 @@ export class createAppointments1622656022949 implements MigrationInterface {
             name: 'updated_at',
             type: 'timestamp',
             default: 'now()'
+          }
+        ],
+        foreignKeys: [
+          {
+            name: 'FKAppointmentProvider',
+            columnNames: ['provider_id'],
+            referencedColumnNames: ['id'],
+            referencedTableName: 'users',
+            onDelete: 'SET NULL',
+            onUpdate: 'CASCADE'
           }
         ]
       })
