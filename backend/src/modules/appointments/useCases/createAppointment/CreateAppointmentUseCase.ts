@@ -1,35 +1,30 @@
+import { ICreateAppointmentDTO } from '@modules/appointments/dtos/ICreateAppointmentDTO'
 import { Appointment } from '@modules/appointments/infra/typeorm/entities/Appointment'
-import { AppointmentsRepository } from '@modules/appointments/repositories/AppointmentsRepository'
+import { IAppointmentsRepository } from '@modules/appointments/repositories/IAppointmentsRepository'
 import { startOfHour } from 'date-fns'
-import { getCustomRepository } from 'typeorm'
 
 import { AppError } from '@shared/errors/AppError'
 
-interface IRequest {
-  provider_id: string
-  date: Date
-}
-
 export class CreateAppointmentUseCase {
-  public async execute({ provider_id, date }: IRequest): Promise<Appointment> {
-    const appointmentsRepository = getCustomRepository(AppointmentsRepository)
+  constructor(private appointmentsRepository: IAppointmentsRepository) {}
 
+  public async execute({
+    provider_id,
+    date
+  }: ICreateAppointmentDTO): Promise<Appointment> {
     const appointmentDate = startOfHour(date)
 
-    const findAppointmentInSameDate = await appointmentsRepository.findByDate(
-      appointmentDate
-    )
+    const findAppointmentInSameDate =
+      await this.appointmentsRepository.findByDate(appointmentDate)
 
     if (findAppointmentInSameDate) {
       throw new AppError('This appointment is already booked')
     }
 
-    const appointment = appointmentsRepository.create({
+    const appointment = await this.appointmentsRepository.create({
       provider_id,
       date: appointmentDate
     })
-
-    await appointmentsRepository.save(appointment)
 
     return appointment
   }
