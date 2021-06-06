@@ -1,17 +1,17 @@
+import uploadConfig from '@config/upload'
+import { User } from '@modules/users/infra/typeorm/entities/User'
 import fs from 'fs'
 import path from 'path'
 import { getRepository } from 'typeorm'
 
-import uploadConfig from '../config/upload'
-import { AppError } from '../errors/AppError'
-import { User } from '../models/User'
+import { AppError } from '@shared/errors/AppError'
 
 interface IRequest {
   user_id: string
   avatarFilename: string
 }
 
-export class UpdateUserAvatarService {
+export class UpdateUserAvatarUseCase {
   public async execute({ user_id, avatarFilename }: IRequest): Promise<User> {
     const usersRepository = getRepository(User)
 

@@ -1,10 +1,10 @@
+import uploadConfig from '@config/upload'
+import { CreateUserUseCase } from '@modules/users/useCases/createUser/CreateUserUseCase'
+import { UpdateUserAvatarUseCase } from '@modules/users/useCases/updateUserAvatar/UpdateUserAvatarUseCase'
 import { Router } from 'express'
 import multer from 'multer'
 
-import uploadConfig from '../config/upload'
-import { ensureAutenticated } from '../middlewares/ensureAuthenticated'
-import { CreateUserService } from '../services/CreateUserService'
-import { UpdateUserAvatarService } from '../services/UpdateUserAvatarService'
+import { ensureAuthenticated } from '@shared/infra/http/middlewares/ensureAuthenticated'
 
 export const userRoutes = Router()
 
@@ -13,7 +13,7 @@ const upload = multer(uploadConfig)
 userRoutes.post('/', async (request, response) => {
   const { name, email, password } = request.body
 
-  const createUser = new CreateUserService()
+  const createUser = new CreateUserUseCase()
 
   const user = await createUser.execute({
     name,
@@ -32,10 +32,10 @@ userRoutes.post('/', async (request, response) => {
 
 userRoutes.patch(
   '/avatar',
-  ensureAutenticated,
+  ensureAuthenticated,
   upload.single('avatar'),
   async (request, response) => {
-    const updateUserAvatar = new UpdateUserAvatarService()
+    const updateUserAvatar = new UpdateUserAvatarUseCase()
 
     const user = await updateUserAvatar.execute({
       user_id: request.user.id,

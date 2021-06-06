@@ -1,13 +1,12 @@
+import { AuthenticateUserUseCase } from '@modules/users/useCases/authenticateUser/AuthenticateUserUseCase'
 import { Router } from 'express'
-
-import { AuthenticateUserService } from '../services/AuthenticateUserService'
 
 export const sessionRoutes = Router()
 
 sessionRoutes.post('/', async (request, response) => {
   const { email, password } = request.body
 
-  const authenticateUser = new AuthenticateUserService()
+  const authenticateUser = new AuthenticateUserUseCase()
 
   const { user, token } = await authenticateUser.execute({
     email,

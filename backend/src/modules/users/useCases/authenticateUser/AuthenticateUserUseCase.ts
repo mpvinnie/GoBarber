@@ -1,10 +1,10 @@
+import authConfig from '@config/auth'
+import { User } from '@modules/users/infra/typeorm/entities/User'
 import { compare } from 'bcryptjs'
 import { sign } from 'jsonwebtoken'
 import { getRepository } from 'typeorm'
 
-import authConfig from '../config/auth'
-import { AppError } from '../errors/AppError'
-import { User } from '../models/User'
+import { AppError } from '@shared/errors/AppError'
 
 interface IRequest {
   email: string
@@ -16,7 +16,7 @@ interface IResponse {
   token: string
 }
 
-export class AuthenticateUserService {
+export class AuthenticateUserUseCase {
   public async execute({ email, password }: IRequest): Promise<IResponse> {
     const usersRepository = getRepository(User)
 

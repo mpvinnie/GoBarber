@@ -1,8 +1,8 @@
+import { User } from '@modules/users/infra/typeorm/entities/User'
 import { hash } from 'bcryptjs'
 import { getRepository } from 'typeorm'
 
-import { AppError } from '../errors/AppError'
-import { User } from '../models/User'
+import { AppError } from '@shared/errors/AppError'
 
 interface IRequest {
   name: string
@@ -10,7 +10,7 @@ interface IRequest {
   password: string
 }
 
-export class CreateUserService {
+export class CreateUserUseCase {
   public async execute({ name, email, password }: IRequest): Promise<User> {
     const usersRepository = getRepository(User)
 

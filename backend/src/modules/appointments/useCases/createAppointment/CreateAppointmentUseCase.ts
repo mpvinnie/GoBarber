@@ -1,16 +1,16 @@
+import { Appointment } from '@modules/appointments/infra/typeorm/entities/Appointment'
+import { AppointmentsRepository } from '@modules/appointments/repositories/AppointmentsRepository'
 import { startOfHour } from 'date-fns'
 import { getCustomRepository } from 'typeorm'
 
-import { AppError } from '../errors/AppError'
-import { Appointment } from '../models/Appointment'
-import { AppointmentsRepository } from '../repositories/AppointmentsRepository'
+import { AppError } from '@shared/errors/AppError'
 
 interface IRequest {
   provider_id: string
   date: Date
 }
 
-export class CreateAppointmentService {
+export class CreateAppointmentUseCase {
   public async execute({ provider_id, date }: IRequest): Promise<Appointment> {
     const appointmentsRepository = getCustomRepository(AppointmentsRepository)
 
