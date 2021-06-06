@@ -6,6 +6,8 @@ import multer from 'multer'
 
 import { ensureAuthenticated } from '@shared/infra/http/middlewares/ensureAuthenticated'
 
+import { UsersRepository } from '../../typeorm/repositories/UsersRepository'
+
 export const userRoutes = Router()
 
 const upload = multer(uploadConfig)
@@ -13,7 +15,9 @@ const upload = multer(uploadConfig)
 userRoutes.post('/', async (request, response) => {
   const { name, email, password } = request.body
 
-  const createUser = new CreateUserUseCase()
+  const usersRepository = new UsersRepository()
+
+  const createUser = new CreateUserUseCase(usersRepository)
 
   const user = await createUser.execute({
     name,
@@ -35,7 +39,9 @@ userRoutes.patch(
   ensureAuthenticated,
   upload.single('avatar'),
   async (request, response) => {
-    const updateUserAvatar = new UpdateUserAvatarUseCase()
+    const usersRepository = new UsersRepository()
+
+    const updateUserAvatar = new UpdateUserAvatarUseCase(usersRepository)
 
     const user = await updateUserAvatar.execute({
       user_id: request.user.id,
